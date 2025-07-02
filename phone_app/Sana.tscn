@@ -1,0 +1,104 @@
+[gd_scene load_steps=4 format=3 uid="uid://cci8yvedkassj"]
+
+[ext_resource type="Texture2D" uid="uid://3a22q4v1e2y2" path="res://Sana.png" id="1_exmaw"]
+
+[sub_resource type="GDScript" id="GDScript_lvljl"]
+script/source = "extends CharacterBody2D
+
+@export var walk_speed: float = 40.0
+@export var wander_range: float = 200.0
+@export var idle_time_range := Vector2(1.0, 3.0)
+
+var direction := Vector2.ZERO
+var state := \"idle\"
+var idle_timer := 0.0
+var target_x := 0.0
+
+func _ready():
+	set_idle()
+
+func _process(delta):
+	match state:
+		\"idle\":
+			idle_timer -= delta
+			if idle_timer <= 0:
+				start_walking()
+		\"walking\":
+			var move_vec = Vector2(sign(target_x - position.x), 0)
+			if abs(target_x - position.x) < 2:
+				set_idle()
+			else:
+				velocity = move_vec * walk_speed
+				move_and_slide()
+func set_idle():
+	state = \"idle\"
+	idle_timer = randf_range(idle_time_range.x, idle_time_range.y)
+	$AnimatedSprite2D.play(\"idle\")
+	velocity = Vector2.ZERO
+
+func start_walking():
+	state = \"walking\"
+	$AnimatedSprite2D.play(\"walk\")
+	# This part sets random walking
+	var offset = randf_range(-wander_range, wander_range)
+	target_x = position.x + offset
+	$AnimatedSprite2D.flip_h = target_x < position.x
+"
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vq6e1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_exmaw")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="CharacterBody2D" type="CharacterBody2D"]
+script = SubResource("GDScript_lvljl")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(191, 540)
+scale = Vector2(0.25, 0.25)
+sprite_frames = SubResource("SpriteFrames_vq6e1")
+animation = &"idle"
+autoplay = "idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+[node name="FollowCamera" type="Camera2D" parent="."]
+anchor_mode = 0
