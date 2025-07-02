@@ -92,13 +92,10 @@ animations = [{
 script = SubResource("GDScript_lvljl")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-position = Vector2(191, 540)
+position = Vector2(0, -120.875)
 scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_vq6e1")
 animation = &"idle"
 autoplay = "idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-
-[node name="FollowCamera" type="Camera2D" parent="."]
-anchor_mode = 0

@@ -7,6 +7,15 @@ extends CharacterBody2D
 var state := "idle"
 var idle_timer := 0.0
 var target_x := 0.0
+var target_y := 0.0
+
+# Define the walkable trapezoid bounds
+const TOP_Y := 570
+const BOTTOM_Y := 675
+const LEFT_TOP := 488.375
+const RIGHT_TOP := 1846.625
+const LEFT_BOTTOM := 83.375
+const RIGHT_BOTTOM := 2238.825
 
 func _ready():
 	set_idle()
@@ -17,13 +26,23 @@ func _process(delta):
 			idle_timer -= delta
 			if idle_timer <= 0:
 				start_walking()
+
 		"walking":
-			var move_vec = Vector2(sign(target_x - position.x), 0)
-			if abs(target_x - position.x) < 2:
+			var move_vec = Vector2(
+				sign(target_x - position.x),
+				sign(target_y - position.y)
+			)
+
+			# Stop walking if we're close enough to the target
+			if abs(target_x - position.x) < 2 and abs(target_y - position.y) < 2:
 				set_idle()
 			else:
-				velocity = move_vec * walk_speed
+				velocity = move_vec.normalized() * walk_speed
 				move_and_slide()
+				
+	# 🛑 Clamp position every frame so character stays in trapezoid
+	var bounds = get_walk_bounds(position.y)
+	position.x = clamp(position.x, bounds.x, bounds.y)
 
 func set_idle():
 	state = "idle"
@@ -34,8 +53,24 @@ func set_idle():
 func start_walking():
 	state = "walking"
 	$AnimatedSprite2D.play("walk")
-	# This part sets random walking
-	# NOTE THAT THIS ONLY WORKS LEFT TO RIGHT
-	var offset = randf_range(-wander_range, wander_range)
-	target_x = position.x + offset
+
+	# Pick a new Y within the trapezoid vertical range
+	target_y = randf_range(BOTTOM_Y, TOP_Y)
+
+	# Get horizontal bounds at that Y
+	var bounds = get_walk_bounds(target_y)
+
+	# Pick a new X within those bounds
+	target_x = randf_range(bounds.x, bounds.y)
+
+	#target_y = TOP_Y
+	#target_x = LEFT_TOP
+
+	# Flip sprite if moving left
 	$AnimatedSprite2D.flip_h = target_x < position.x
+	
+func get_walk_bounds(y: float) -> Vector2:
+	var t = clamp((y - TOP_Y) / (BOTTOM_Y - TOP_Y), 0.0, 1.0)
+	var left = lerp(LEFT_TOP, LEFT_BOTTOM, t)
+	var right = lerp(RIGHT_TOP, RIGHT_BOTTOM, t)
+	return Vector2(left, right)
