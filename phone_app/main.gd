@@ -11,7 +11,7 @@ var drag_start_mouse_x := 0.0
 var drag_start_camera_x := 0.0
 
 # Width of background (update this if background is different)
-@export var background_width := 1920
+@export var background_width := 2332.2
 @onready var camera_viewport_width := get_viewport_rect().size.x
 
 func _ready():
@@ -68,3 +68,10 @@ func _unhandled_input(event):
 			0,
 			background_width - camera_viewport_width
 		)
+
+func _process(_delta):
+	if following:
+		# Clamp the camera's x to the background edges
+		var new_x = clamp(character.global_position.x, 0, background_width - camera_viewport_width)
+		camera.global_position.x = new_x
+		camera.global_position.y = character.global_position.y  # optional
