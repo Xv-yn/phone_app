@@ -4,6 +4,8 @@ extends Node2D
 @onready var button: Button = $CanvasLayer/CameraToggleButton
 @onready var camera_pivot: Node2D = $CameraPivot
 @onready var character: Node2D = $Sana
+@onready var gramophone = $Gramophone
+@onready var clock_button: Button = $CanvasLayer/ClockButton
 
 var following := true
 var dragging := false
@@ -18,6 +20,7 @@ const CAMERA_Y_LOCK := 0
 
 func _ready():
 	button.pressed.connect(_on_camera_toggle)
+	clock_button.pressed.connect(_on_clock_pressed)
 	
 	if following:
 		# Start camera centered on the character immediately
@@ -28,6 +31,8 @@ func _ready():
 			background_width - camera_viewport_width
 		)
 		camera.global_position = Vector2(target_x, CAMERA_Y_LOCK)
+		
+	gramophone.toggled_music.connect(_on_gramophone_toggled)
 		
 func _on_camera_toggle():
 	if following:
@@ -90,3 +95,15 @@ func _process(delta):
 
 		# Smooth interpolation (lerp camera toward character)
 		camera.global_position = camera.global_position.lerp(target_pos, 8 * delta)
+
+func _on_gramophone_toggled(on: bool):
+	if on:
+		character.dash_to(gramophone.global_position, "gramophone")
+	else:
+		character.set_idle()
+		
+func _on_clock_pressed():
+	if not character.showing_clock:
+		character.show_clock()
+	else:
+		character.hide_clock()

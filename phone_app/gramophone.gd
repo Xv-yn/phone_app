@@ -5,6 +5,8 @@ extends Area2D
 
 var playing := false
 
+signal toggled_music(on: bool)
+
 func _ready():
 	connect("input_event", _on_input_event)
 
@@ -13,8 +15,10 @@ func _on_input_event(_viewport, event, _shape_idx):
 		if playing:
 			player.stop()
 			playing = false
-			sprite.modulate = Color(1, 1, 1)  # normal color
+			sprite.modulate = Color(1, 1, 1)
+			emit_signal("toggled_music", false)
 		else:
 			player.play()
 			playing = true
-			sprite.modulate = Color(0.7, 1.0, 0.7)  # green tint to show it's active
+			sprite.modulate = Color(0.7, 1.0, 0.7)
+			emit_signal("toggled_music", true)

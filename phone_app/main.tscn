@@ -1,9 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dylrp0j2fgsfj"]
+[gd_scene load_steps=5 format=3 uid="uid://dylrp0j2fgsfj"]
 
 [ext_resource type="Script" uid="uid://cu3md3dbxh41b" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="Texture2D" uid="uid://c0tx0clq3nmdj" path="res://Background.jpg" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://cci8yvedkassj" path="res://Sana.tscn" id="2_h2yge"]
-[ext_resource type="Script" uid="uid://dauhw0yru0r6y" path="res://Sana.gd" id="4_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://4tpxp688i6or" path="res://gramophone.tscn" id="5_lquwl"]
 
 [node name="Main" type="Node2D"]
@@ -16,16 +15,23 @@ centered = false
 
 [node name="Sana" parent="." instance=ExtResource("2_h2yge")]
 position = Vector2(175, 667)
-script = ExtResource("4_1bvp3")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="CameraToggleButton" type="Button" parent="CanvasLayer"]
-offset_left = 6.0
-offset_top = 679.0
-offset_right = 129.0
-offset_bottom = 710.0
+offset_left = 5.0
+offset_top = 681.0
+offset_right = 128.0
+offset_bottom = 712.0
 text = "Toggle Camera"
+metadata/_edit_use_anchors_ = true
+
+[node name="ClockButton" type="Button" parent="CanvasLayer"]
+offset_left = 136.0
+offset_top = 681.0
+offset_right = 259.0
+offset_bottom = 712.0
+text = "Toggle Clock"
 metadata/_edit_use_anchors_ = true
 
 [node name="CameraPivot" type="Node2D" parent="."]

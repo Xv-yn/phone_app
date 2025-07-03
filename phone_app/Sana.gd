@@ -17,9 +17,22 @@ const RIGHT_TOP := 1846.625
 const LEFT_BOTTOM := 83.375
 const RIGHT_BOTTOM := 2238.825
 
+var dash_target := Vector2.ZERO
+var current_task := ""
+
+@onready var clock_sprite: Sprite2D = $ClockSprite
+@onready var time_label: Label = $ClockSprite/TimeLabel
+
+var showing_clock := false
+var time_timer := Timer.new()
+
 func _ready():
 	set_idle()
 	update_depth_scale()
+	add_child(time_timer)
+	time_timer.start()
+	time_timer.wait_time = 1.0  # Update every second
+	time_timer.timeout.connect(_update_clock_time)
 	
 func _process(delta):
 	match state:
@@ -39,6 +52,15 @@ func _process(delta):
 				set_idle()
 			else:
 				velocity = move_vec.normalized() * walk_speed
+				move_and_slide()
+		"dashing":
+			var dir = dash_target - position
+			if dir.length() < 4:
+				velocity = Vector2.ZERO
+				$AnimatedSprite2D.play("idle")
+				state = current_task  # Transition into the appropriate task
+			else:
+				velocity = dir.normalized() * (walk_speed * 2.5)
 				move_and_slide()
 				
 	# 🛑 Clamp position every frame so character stays in trapezoid
@@ -91,3 +113,34 @@ func update_depth_scale():
 
 	var s = lerp(min_scale, max_scale, t)
 	scale = Vector2(s, s)
+
+func dash_to(target_pos: Vector2, task_name: String):
+	dash_target = target_pos
+	current_task = task_name
+	state = "dashing"
+	$AnimatedSprite2D.play("walk")
+
+func show_clock():
+	if not showing_clock:
+		showing_clock = true
+		clock_sprite.visible = true
+		$AnimatedSprite2D.play("hold_clock")
+
+		# Set position to front (e.g., center X, front Y)
+		dash_target = Vector2(position.x, 680)  # Adjust Y (BOTTOM_Y-like value)
+		current_task = "clock"
+		state = "dashing"
+
+func hide_clock():
+	if showing_clock:
+		showing_clock = false
+		clock_sprite.visible = false
+		set_idle()
+		
+func _update_clock_time():
+	var time = Time.get_time_dict_from_system()
+	var hour = time["hour"]
+	var minute = time["minute"]
+	var second = time["second"]
+
+	time_label.text = "%02d:%02d:%02d" % [hour, minute, second]
