@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3 uid="uid://4tpxp688i6or"]
+
+[ext_resource type="Script" uid="uid://dfx387svmgvan" path="res://gramophone.gd" id="1_vubsn"]
+[ext_resource type="Texture2D" uid="uid://qtx5ivqhc1os" path="res://gramphone.png" id="2_qli0g"]
+[ext_resource type="AudioStream" uid="uid://bvojb0n5nanvl" path="res://5_04_lofi_music.mp3" id="3_khnm0"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8jvcq"]
+size = Vector2(130, 226)
+
+[node name="Gramophone" type="Area2D"]
+script = ExtResource("1_vubsn")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_qli0g")
+offset = Vector2(0, -113)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -113)
+shape = SubResource("RectangleShape2D_8jvcq")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_khnm0")

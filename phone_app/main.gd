@@ -18,13 +18,25 @@ const CAMERA_Y_LOCK := 0
 
 func _ready():
 	button.pressed.connect(_on_camera_toggle)
-
+	
+	if following:
+		# Start camera centered on the character immediately
+		var half_viewport = Vector2(camera_viewport_width / 2, get_viewport_rect().size.y / 2)
+		var target_x = clamp(
+			character.global_position.x - half_viewport.x,
+			0,
+			background_width - camera_viewport_width
+		)
+		camera.global_position = Vector2(target_x, CAMERA_Y_LOCK)
+		
 func _on_camera_toggle():
 	if following:
 		# Stop following and switch to free camera
 		var global_pos = camera.global_position
-		character.remove_child(camera)
-		camera_pivot.add_child(camera)
+		if camera.get_parent() == character:
+			character.remove_child(camera)
+		if camera.get_parent() != camera_pivot:
+			camera_pivot.add_child(camera)
 		camera.global_position = global_pos
 		camera.position = Vector2.ZERO  # <-- Important: reset local offset
 		camera.enabled = true
@@ -39,8 +51,10 @@ func _on_camera_toggle():
 	else:
 		# Switch to follow mode (without tween)
 		var global_pos = camera.global_position
-		camera_pivot.remove_child(camera)
-		character.add_child(camera)
+		if camera.get_parent() == camera_pivot:
+			camera_pivot.remove_child(camera)
+		if camera.get_parent() != character:
+			character.add_child(camera)
 		camera.global_position = global_pos  # Restore exact position
 		camera.position = character.to_local(global_pos)  # Optional correction
 		camera.enabled = true

@@ -19,7 +19,8 @@ const RIGHT_BOTTOM := 2238.825
 
 func _ready():
 	set_idle()
-
+	update_depth_scale()
+	
 func _process(delta):
 	match state:
 		"idle":
@@ -43,6 +44,8 @@ func _process(delta):
 	# 🛑 Clamp position every frame so character stays in trapezoid
 	var bounds = get_walk_bounds(position.y)
 	position.x = clamp(position.x, bounds.x, bounds.y)
+	
+	update_depth_scale()
 
 func set_idle():
 	state = "idle"
@@ -74,3 +77,17 @@ func get_walk_bounds(y: float) -> Vector2:
 	var left = lerp(LEFT_TOP, LEFT_BOTTOM, t)
 	var right = lerp(RIGHT_TOP, RIGHT_BOTTOM, t)
 	return Vector2(left, right)
+
+
+func update_depth_scale():
+	# Adjust this range to match your scene’s vertical walk space
+	var min_y = TOP_Y
+	var max_y = BOTTOM_Y
+	
+	var t = clamp((position.y - min_y) / (max_y - min_y), 0.0, 1.0)
+
+	var min_scale = 0.85
+	var max_scale = 1.0
+
+	var s = lerp(min_scale, max_scale, t)
+	scale = Vector2(s, s)

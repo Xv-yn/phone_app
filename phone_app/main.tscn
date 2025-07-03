@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dylrp0j2fgsfj"]
+[gd_scene load_steps=6 format=3 uid="uid://dylrp0j2fgsfj"]
 
 [ext_resource type="Script" uid="uid://cu3md3dbxh41b" path="res://main.gd" id="1_0xm2m"]
 [ext_resource type="Texture2D" uid="uid://c0tx0clq3nmdj" path="res://Background.jpg" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://cci8yvedkassj" path="res://Sana.tscn" id="2_h2yge"]
 [ext_resource type="Script" uid="uid://dauhw0yru0r6y" path="res://Sana.gd" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://4tpxp688i6or" path="res://gramophone.tscn" id="5_lquwl"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_0xm2m")
@@ -14,7 +15,7 @@ texture = ExtResource("2_1bvp3")
 centered = false
 
 [node name="Sana" parent="." instance=ExtResource("2_h2yge")]
-position = Vector2(181, 663)
+position = Vector2(175, 667)
 script = ExtResource("4_1bvp3")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
@@ -34,3 +35,6 @@ anchor_mode = 0
 
 [node name="Line2D" type="Line2D" parent="."]
 points = PackedVector2Array(488.375, 570, 1846.63, 570, 2238.82, 675, 83.375, 675, 488.375, 570)
+
+[node name="Gramophone" parent="." instance=ExtResource("5_lquwl")]
+position = Vector2(488, 628)
